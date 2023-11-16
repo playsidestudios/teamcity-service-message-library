@@ -6,90 +6,6 @@ import java.nio.file.Path
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-enum class Message(val text: String) {
-  EnabledServiceMessages("enabledServiceMessages"),
-  DisabledServiceMessages("disabledServiceMessages"),
-  BlockOpened("blockOpened"),
-  BlockClosed("blockClosed"),
-  CompilationStarted("compilationStarted"),
-  CompilationFinished("compilationFinished"),
-  GenericMessage("message"),
-  TestSuiteStarted("testSuiteStarted"),
-  TestSuiteFinished("testSuiteFinished"),
-  TestStarted("testStarted"),
-  TestFinished("testFinished"),
-  TestFailed("testFailed"),
-  TestIgnored("testIgnored"),
-  TestStdErr("testStdErr"),
-  TestStdOut("testStdOut"),
-  TestMetadata("testMetadata"),
-  InspectionType("inspectionType"),
-  Inspection("inspection"),
-}
-
-enum class Status {
-  NORMAL,
-  WARNING,
-  FAILURE,
-  ERROR,
-}
-
-enum class InspectionSeverity(val text: String) {
-  INFO("INFO"),
-  ERROR("ERROR"),
-  WARNING("WARNING"),
-  WEAK_WARNING("WEAK WARNING"),
-}
-
-enum class MetadataType(val text: String?) {
-  TEXT(null),
-  NUMBER("number"),
-  LINK("link"),
-  ARTIFACT("artifact"),
-  IMAGE("image"),
-  VIDEO("video"),
-}
-
-private interface ServiceMessage {
-  override fun toString(): String
-
-  fun print()
-}
-
-private interface ServiceMessageBlock {
-  fun open()
-
-  fun close()
-}
-
-abstract class TeamCityMessage(
-    private val name: Message,
-    private val arguments: List<Pair<String, String?>> = listOf(),
-) : ServiceMessage {
-
-  private fun String.escapeValues(): String {
-    return this.replace("|", "||")
-        .replace("'", "|'")
-        .replace("\n", "|n")
-        .replace("\r", "|r")
-        .replace("[", "|[")
-        .replace("]", "|]")
-        .replace(Regex("\\\\u([\\da-zA-Z]{4})")) { "|0x${it.groups[1]}" }
-  }
-
-  override fun toString(): String {
-    val content =
-        this.arguments
-            .filter { it.second != null }
-            .joinToString(separator = " ") { "${it.first}='${it.second?.escapeValues()}'" }
-    return "##teamcity[${this.name.text} $content]"
-  }
-
-  override fun print() {
-    println(toString())
-  }
-}
-
 private class EnableServiceMessages : TeamCityMessage(Message.EnabledServiceMessages)
 
 private class DisableServiceMessages : TeamCityMessage(Message.DisabledServiceMessages)
@@ -185,33 +101,6 @@ private class TestFailedComparison(
             "actual" to actual,
             "expected" to expected))
 
-/**
- * You can report messages to a build log as follows:
- * ```##teamcity[message text='<message text>' errorDetails='<error details>' status='<status value>']```
- *
- * where:
- *
- * - 'status' can take the following values: NORMAL (default), WARNING, FAILURE, ERROR.
- * - 'errorDetails' is used only if status is ERROR, in other cases it is ignored. This message fails the build in case its status is ERROR and the "Fail build if an error message is logged by build runner" box is checked on the Build Failure Conditions page of the build configuration.
- *
- * ```##teamcity[message text='Exception text' errorDetails='stack trace' status='ERROR']```
- */
-class GenericMessage(
-    text: String,
-    status: Status = Status.NORMAL,
-    errorDetails: String? = null,
-    flowId: String? = null,
-) :
-    TeamCityMessage(
-        Message.GenericMessage,
-        listOf(
-            "text" to text,
-            "status" to status.name,
-            "errorDetails" to errorDetails,
-            "flowId" to flowId,
-        ),
-    )
-
 class BLOCK(private var name: String, private var description: String?) : ServiceMessageBlock {
   override fun open() {
     BlockOpened(this.name, this.description).print()
@@ -232,7 +121,7 @@ class COMPILER(private var compiler: String) : ServiceMessageBlock {
   }
 }
 
-class TEST(var test: String, private var captureStandardOutput: Boolean) : ServiceMessageBlock {
+class TEST(private var test: String, private var captureStandardOutput: Boolean) : ServiceMessageBlock {
   private val timeSource = TimeSource.Monotonic
   private var startTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
   private var endTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
