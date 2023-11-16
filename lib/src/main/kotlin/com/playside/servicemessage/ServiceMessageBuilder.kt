@@ -23,6 +23,8 @@ enum class Message(val text: String) {
   TestStdErr("testStdErr"),
   TestStdOut("testStdOut"),
   TestMetadata("testMetadata"),
+  InspectionType("inspectionType"),
+  Inspection("inspection"),
 }
 
 enum class Status {
@@ -30,6 +32,13 @@ enum class Status {
   WARNING,
   FAILURE,
   ERROR,
+}
+
+enum class InspectionSeverity(val text: String) {
+  INFO("INFO"),
+  ERROR("ERROR"),
+  WARNING("WARNING"),
+  WEAK_WARNING("WEAK WARNING"),
 }
 
 enum class MetadataType(val text: String?) {
@@ -96,6 +105,27 @@ private class CompilerOpen(compiler: String) :
 
 private class CompilerClosed(compiler: String) :
     TeamCityMessage(Message.CompilationFinished, listOf("compiler" to compiler))
+
+private class InspectionType(id: String, name: String, category: String, description: String) :
+    TeamCityMessage(
+        Message.InspectionType,
+        listOf("id" to id, "name" to name, "category" to category, "description" to description))
+
+private class InspectionMessage(
+    id: String,
+    file: Path,
+    line: Int? = null,
+    message: String? = null,
+    severity: InspectionSeverity? = null
+) :
+    TeamCityMessage(
+        Message.Inspection,
+        listOf(
+            "typeId" to id,
+            "message" to message,
+            "file" to file.toString(),
+            "line" to line?.toString(),
+            "SEVERITY" to severity?.text))
 
 private class TestSuiteStarted(testSuite: String) :
     TeamCityMessage(Message.TestSuiteStarted, listOf("name" to testSuite))
@@ -361,6 +391,20 @@ fun enableServiceMessages() {
 
 fun disableServiceMessages() {
   DisableServiceMessages().print()
+}
+
+fun inspectionType(id: String, name: String, category: String, description: String) {
+  InspectionType(id, name, category, description).print()
+}
+
+fun inspection(
+    id: String,
+    file: Path,
+    line: Int?,
+    message: String?,
+    severity: InspectionSeverity?
+) {
+  InspectionMessage(id, file, line, message, severity).print()
 }
 
 fun main() {
