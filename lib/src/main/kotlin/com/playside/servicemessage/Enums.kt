@@ -1,8 +1,8 @@
 package com.playside.servicemessage
 
 enum class Message(val text: String) {
-  EnabledServiceMessages("enabledServiceMessages"),
-  DisabledServiceMessages("disabledServiceMessages"),
+  EnabledServiceMessages("enableServiceMessages"),
+  DisabledServiceMessages("disableServiceMessages"),
   BlockOpened("blockOpened"),
   BlockClosed("blockClosed"),
   CompilationStarted("compilationStarted"),
