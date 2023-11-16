@@ -127,6 +127,8 @@ class TEST(private var test: String, private var captureStandardOutput: Boolean)
   private var endTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
   var failures: Int = 0
   var ignored: Boolean = false
+  val duration: Int
+    get() = (endTime - startTime).toInt(DurationUnit.MILLISECONDS)
 
   override fun open() {
     startTime = timeSource.markNow()
@@ -135,7 +137,7 @@ class TEST(private var test: String, private var captureStandardOutput: Boolean)
 
   override fun close() {
     endTime = timeSource.markNow()
-    TestFinished(test, (endTime - startTime).toInt(DurationUnit.MILLISECONDS)).print()
+    TestFinished(test, duration).print()
   }
 
   fun failed(message: String, details: String) {
@@ -201,7 +203,7 @@ class TEST(private var test: String, private var captureStandardOutput: Boolean)
 }
 
 class TESTS(private val testSuite: String) : ServiceMessageBlock {
-  private val children = arrayListOf<TEST>()
+  val children = arrayListOf<TEST>()
   val totalFailures: Int
     get() =
         children.fold(0) { sum, test ->
