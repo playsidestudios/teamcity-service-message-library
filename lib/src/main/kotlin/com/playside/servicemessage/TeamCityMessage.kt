@@ -16,11 +16,16 @@ abstract class TeamCityMessage(
   }
 
   override fun toString(): String {
-    val content =
+    var content =
         this.arguments
             .filter { it.second != null }
             .joinToString(separator = " ") { "${it.first}='${it.second?.escapeValues()}'" }
-    return "##teamcity[${this.name.text} $content]"
+
+    if (content.isNotBlank()) {
+      content = " $content"
+    }
+
+    return "##teamcity[${this.name.text}$content]"
   }
 
   override fun print() {
