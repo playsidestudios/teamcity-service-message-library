@@ -1,14 +1,13 @@
 package com.playside.servicemessage
 
-import java.net.URI
 import java.net.URL
 import java.nio.file.Path
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-private class EnableServiceMessages : TeamCityMessage(Message.EnabledServiceMessages)
+class EnableServiceMessages : TeamCityMessage(Message.EnabledServiceMessages)
 
-private class DisableServiceMessages : TeamCityMessage(Message.DisabledServiceMessages)
+class DisableServiceMessages : TeamCityMessage(Message.DisabledServiceMessages)
 
 private class BlockOpened(name: String, description: String? = null) :
     TeamCityMessage(Message.BlockOpened, listOf("name" to name, "description" to description))
@@ -121,7 +120,8 @@ class COMPILER(private var compiler: String) : ServiceMessageBlock {
   }
 }
 
-class TEST(private var test: String, private var captureStandardOutput: Boolean) : ServiceMessageBlock {
+class TEST(private var test: String, private var captureStandardOutput: Boolean) :
+    ServiceMessageBlock {
   private val timeSource = TimeSource.Monotonic
   private var startTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
   private var endTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
@@ -294,33 +294,4 @@ fun inspection(
     severity: InspectionSeverity?
 ) {
   InspectionMessage(id, file, line, message, severity).print()
-}
-
-fun main() {
-  block("test") { enableServiceMessages() }
-  compiler("kotlinc") {
-    GenericMessage("warn here", Status.WARNING).print()
-    println("test some stuff")
-    println("compiling here")
-  }
-  val auditTests =
-      testSuite("audit tests") {
-        test("test one") {
-          Thread.sleep(333)
-          stdErr("the test failed")
-          metadataLink("gitlab url", URI("https://gitlab.playsidestudios.dev").toURL())
-          failedComparison("comparison failure", "couldn't compare", "1", "0")
-          ignore("don't count this")
-        }
-        test("test two") {
-          stdOut("testing a thing")
-          Thread.sleep(666)
-        }
-        test("test three") {
-          Thread.sleep(10)
-          metadataNumber("stat", 100.5f)
-          failed("doesn't work", "fail")
-        }
-      }
-  println(auditTests.totalFailures)
 }

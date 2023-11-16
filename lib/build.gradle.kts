@@ -28,21 +28,13 @@ dependencies {
   implementation("com.google.guava:guava:32.1.1-jre")
 
   // This dependency lets us capture system.out and assert on its content
-  testImplementation("com.github.stefanbirkner:system-lambda:1.2.0")
-}
-
-testing {
-  suites {
-    // Configure the built-in test suite
-    val test by
-        getting(JvmTestSuite::class) {
-          // Use Kotlin Test framework
-          useKotlinTest("1.9.20")
-        }
-  }
+  testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
+  testImplementation(kotlin("test"))
 }
 
 kotlin { sourceSets.all { languageSettings { languageVersion = "2.0" } } }
 
 // Apply a specific Java toolchain to ease working on different environments.
 java { toolchain { languageVersion.set(JavaLanguageVersion.of(20)) } }
+
+tasks.test { useJUnitPlatform() }
