@@ -20,6 +20,11 @@ repositories {
 }
 
 dependencies {
+  val kotlinxHtmlVersion = "0.9.1"
+
+  // kotlinx html
+  testImplementation("org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinxHtmlVersion")
+
   // This dependency lets us capture system.out and assert on its content
   testImplementation("com.github.stefanbirkner:system-lambda:1.2.1")
   testImplementation(kotlin("test"))
