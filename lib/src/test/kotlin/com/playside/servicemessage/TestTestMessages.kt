@@ -1,17 +1,12 @@
 package com.playside.servicemessage
 
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
-import kotlinx.html.body
-import kotlinx.html.html
-import kotlinx.html.p
-import kotlinx.html.stream.createHTML
-import kotlin.io.path.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class OutputTests {
-  val testSuiteName = "tests"
-  val testName = "test"
+internal class TestTestMessages {
+  private val testSuiteName = "tests"
+  private val testName = "test"
 
   @Test
   fun testSuccess() {
@@ -59,26 +54,40 @@ internal class OutputTests {
   }
 
   @Test
-  fun inspectionOutput() {
+  fun testFailure() {
+    var testSuiteResult: TESTS? = null
+
     val stdOut = tapSystemOutNormalized {
-      inspection(
-          "test", Path("nofile"), 1, message = "test message", severity = InspectionSeverity.ERROR)
+      testSuiteResult =
+          testSuite(testSuiteName) {
+            test(testName) {
+              val expectedResult = 1
+              val testResult = functionThatFails()
+              if (testResult != expectedResult) {
+                failedComparison(
+                    "test did not pass",
+                    "because of reasons",
+                    actual = testResult.toString(),
+                    expected = expectedResult.toString())
+              }
+            }
+          }
     }
 
     assertEquals(
-        "##teamcity[inspection typeId='test' message='test message' file='nofile' line='1' SEVERITY='ERROR']",
+        """
+##teamcity[testSuiteStarted name='$testSuiteName']
+##teamcity[testStarted name='$testName' captureStandardOutput='false']
+##teamcity[testFailed name='$testName' message='test did not pass' details='because of reasons' type='comparisonFailure' actual='0' expected='1']
+##teamcity[testFinished name='$testName' duration='${testSuiteResult!!.children[0].duration}']
+##teamcity[testSuiteFinished name='$testSuiteName']
+"""
+            .trimIndent(),
         stdOut.trim())
+    assertEquals(1, testSuiteResult!!.totalFailures)
   }
 
-  @Test
-  fun inspectionTypeOutput() {
-    val testId = "test"
-    val descriptionHtml = createHTML().html { body { p { +"Description in html" } } }
-    val stdOut = tapSystemOutNormalized {
-      inspectionType(testId, "name", "category", descriptionHtml)
-    }
-    assertEquals(
-        "##teamcity[inspectionType id='$testId' name='name' category='category' description='<html>|n  <body>|n    <p>Description in html</p>|n  </body>|n</html>|n']",
-        stdOut.trim())
+  private fun functionThatFails(): Int {
+    return 0
   }
 }

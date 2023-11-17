@@ -4,7 +4,7 @@ import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class MessageTests {
+internal class OneLinerTests {
   @Test
   fun testEnableServiceMessages() {
     val enableExpected = "##teamcity[enableServiceMessages]"
