@@ -81,7 +81,7 @@ private class TestFailed(test: String, message: String, details: String) :
 private class TestMetadata(test: String, value: String, type: MetadataType, name: String? = null) :
     TeamCityMessage(
         Message.TestMetadata,
-        listOf("name" to name, "testname" to test, "value" to value, "type" to type.text))
+        listOf("name" to name, "test-name" to test, "value" to value, "type" to type.text))
 
 private class TestFailedComparison(
     test: String,
@@ -210,7 +210,7 @@ class TESTS(private val testSuite: String) : ServiceMessageBlock {
           if (!test.ignored) {
             sum + test.failures
           } else {
-            0
+            sum
           }
         }
 

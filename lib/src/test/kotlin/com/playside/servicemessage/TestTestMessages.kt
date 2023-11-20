@@ -54,6 +54,37 @@ internal class TestTestMessages {
   }
 
   @Test
+  fun testMultipleIgnored() {
+    var testSuiteResult: TESTS? = null
+    val output = tapSystemOutNormalized {
+      testSuiteResult =
+          testSuite(testSuiteName) {
+            test("test 2") { failed("test_failed", "also failed") }
+            test("test 1") {
+              ignore("ignore this test")
+              failed("test_failed", "failed")
+            }
+          }
+    }
+    assertEquals(
+        """
+##teamcity[testSuiteStarted name='$testSuiteName']
+##teamcity[testStarted name='test 2' captureStandardOutput='false']
+##teamcity[testFailed name='test 2' message='test_failed' details='also failed']
+##teamcity[testFinished name='test 2' duration='${testSuiteResult!!.children[0].duration}']
+##teamcity[testStarted name='test 1' captureStandardOutput='false']
+##teamcity[testIgnored name='test 1' message='ignore this test']
+##teamcity[testFailed name='test 1' message='test_failed' details='failed']
+##teamcity[testFinished name='test 1' duration='${testSuiteResult!!.children[1].duration}']
+##teamcity[testSuiteFinished name='$testSuiteName']
+"""
+            .trimIndent(),
+        output.trim())
+    assertEquals(1, testSuiteResult!!.totalFailures)
+    assertEquals(2, testSuiteResult!!.children.size)
+  }
+
+  @Test
   fun testFailure() {
     var testSuiteResult: TESTS? = null
 
@@ -87,6 +118,7 @@ internal class TestTestMessages {
     assertEquals(1, testSuiteResult!!.totalFailures)
   }
 
+  @Suppress("SameReturnValue")
   private fun functionThatFails(): Int {
     return 0
   }
