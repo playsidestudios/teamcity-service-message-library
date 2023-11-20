@@ -12,6 +12,8 @@ plugins {
 
   // Apply the java-library plugin for API and implementation separation.
   `java-library`
+  `maven-publish`
+  signing
 }
 
 repositories {
@@ -33,6 +35,15 @@ dependencies {
 kotlin { sourceSets.all { languageSettings { languageVersion = "2.0" } } }
 
 // Apply a specific Java toolchain to ease working on different environments.
-java { toolchain { languageVersion.set(JavaLanguageVersion.of(20)) } }
+java { toolchain { languageVersion.set(JavaLanguageVersion.of(11)) } }
 
 tasks.test { useJUnitPlatform() }
+
+signing {
+  val signingKey: String? by project
+  val signingPassword: String? by project
+  useInMemoryPgpKeys(signingKey, signingPassword)
+  // sign(tasks["stuffZip"])
+}
+
+artifacts {}
