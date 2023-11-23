@@ -16,14 +16,14 @@ internal class TestInspections {
         SystemLambda.tapSystemOutNormalized {
           inspection(
               "test",
-              Path("nofile"),
+              Path("file"),
               1,
               message = "test message",
               severity = InspectionSeverity.ERROR)
         }
 
     assertEquals(
-        "##teamcity[inspection typeId='test' message='test message' file='nofile' line='1' SEVERITY='ERROR']",
+        "##teamcity[inspection typeId='test' message='test message' file='file' line='1' SEVERITY='ERROR']",
         stdOut.trim())
   }
 

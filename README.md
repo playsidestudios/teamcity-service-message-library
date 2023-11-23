@@ -46,3 +46,19 @@ For more examples of how the library can be used take a look at the tests.
 
 - proper support for flowId (this is supposed to be possible to use in any message)
 - proper support for timestamp (this is also generic across all message types)
+
+## Build Setup
+
+For sonatype
+login [create a token username/password pair](https://blog.solidsoft.pl/2015/09/08/deploy-to-maven-central-using-api-key-aka-auth-token/)
+and set them as env variables.
+
+- `ORG_GRADLE_PROJECT_sonatypeUsername`
+- `ORG_GRADLE_PROJECT_sonatypePassword`
+
+For pgp
+key [use in-memory ascii-armored OpenPGP subkeys](https://docs.gradle.org/current/userguide/signing_plugin.html#using_in_memory_ascii_armored_openpgp_subkeys)
+
+- `ORG_GRADLE_PROJECT_signingKeyId`
+- `ORG_GRADLE_PROJECT_signingKey`
+- `ORG_GRADLE_PROJECT_signingPassword`
