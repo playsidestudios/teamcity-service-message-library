@@ -15,19 +15,17 @@ dependencies {
   testImplementation(kotlin("test"))
 }
 
+group = "io.github.playsidestudios"
 
-group = "com.playside.teamcity.servicemessages"
+java { toolchain { languageVersion.set(JavaLanguageVersion.of(11)) } }
 
 kotlin { sourceSets.all { languageSettings { languageVersion = "2.0" } } }
-
-// Apply a specific Java toolchain to ease working on different environments.
-java { toolchain { languageVersion.set(JavaLanguageVersion.of(11)) } }
 
 tasks.test { useJUnitPlatform() }
 
 nexusPublishing {
   repositories {
-    sonatype { // only for users registered in Sonatype after 24 Feb 2021
+    sonatype {
       nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
       snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
     }
@@ -68,9 +66,8 @@ publishing {
 }
 
 signing {
-  //val signingKey: String? by project
-  //val signingPassword: String? by project
-  //val keyId: String? by project
-  //useInMemoryPgpKeys(keyId, signingKey, signingPassword)
+  val signingKey: String? by project
+  val signingPassword: String? by project
+  useInMemoryPgpKeys(signingKey, signingPassword)
   sign(publishing.publications["mavenJava"])
 }
