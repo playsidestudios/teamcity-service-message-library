@@ -1,4 +1,4 @@
-package com.playside.servicemessage
+package io.github.playsidestudios.teamcityservicemessages
 
 import java.net.URL
 import java.nio.file.Path
@@ -120,8 +120,7 @@ class COMPILER(private var compiler: String) : ServiceMessageBlock {
   }
 }
 
-class TEST(private var test: String, private var captureStandardOutput: Boolean) :
-    ServiceMessageBlock {
+class TEST(private var test: String, private var captureStandardOutput: Boolean) : ServiceMessageBlock {
   private val timeSource = TimeSource.Monotonic
   private var startTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
   private var endTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()

@@ -1,4 +1,4 @@
-package com.playside.servicemessage
+package io.github.playsidestudios.teamcityservicemessages
 
 enum class Message(val text: String) {
   EnabledServiceMessages("enableServiceMessages"),

@@ -1,4 +1,4 @@
-package com.playside.servicemessage
+package io.github.playsidestudios.teamcityservicemessages
 
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
 import kotlin.test.Test

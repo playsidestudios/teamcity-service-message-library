@@ -1,4 +1,4 @@
-package com.playside.servicemessage
+package io.github.playsidestudios.teamcityservicemessages
 
 import com.github.stefanbirkner.systemlambda.SystemLambda
 import kotlin.io.path.Path
@@ -19,7 +19,8 @@ internal class TestInspections {
               Path("file"),
               1,
               message = "test message",
-              severity = InspectionSeverity.ERROR)
+              severity = InspectionSeverity.ERROR
+          )
         }
 
     assertEquals(
