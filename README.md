@@ -59,6 +59,5 @@ and set them as env variables.
 For pgp
 key [use in-memory ascii-armored OpenPGP subkeys](https://docs.gradle.org/current/userguide/signing_plugin.html#using_in_memory_ascii_armored_openpgp_subkeys)
 
-- `ORG_GRADLE_PROJECT_signingKeyId`
 - `ORG_GRADLE_PROJECT_signingKey`
 - `ORG_GRADLE_PROJECT_signingPassword`

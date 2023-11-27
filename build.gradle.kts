@@ -1,10 +1,12 @@
 plugins {
-  id("org.jetbrains.kotlin.jvm") version "1.9.20"
+  id("org.jetbrains.kotlin.jvm") version "1.9.21"
   `java-library`
   `maven-publish`
   signing
   id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
+
+var jdkVersion = 11
 
 repositories { mavenCentral() }
 
@@ -17,9 +19,16 @@ dependencies {
 
 group = "io.github.playsidestudios"
 
-java { toolchain { languageVersion.set(JavaLanguageVersion.of(11)) } }
+java {
+  toolchain { languageVersion.set(JavaLanguageVersion.of(jdkVersion)) }
+  withJavadocJar()
+  withSourcesJar()
+}
 
-kotlin { sourceSets.all { languageSettings { languageVersion = "2.0" } } }
+kotlin {
+  jvmToolchain(jdkVersion)
+  sourceSets.all { languageSettings { languageVersion = "2.0" } }
+}
 
 tasks.test { useJUnitPlatform() }
 
