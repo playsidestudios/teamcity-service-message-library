@@ -6,8 +6,6 @@ plugins {
   id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
-var jdkVersion = 11
-
 repositories { mavenCentral() }
 
 dependencies {
@@ -20,15 +18,11 @@ dependencies {
 group = "io.github.playsidestudios"
 
 java {
-  toolchain { languageVersion.set(JavaLanguageVersion.of(jdkVersion)) }
   withJavadocJar()
   withSourcesJar()
 }
 
-kotlin {
-  jvmToolchain(jdkVersion)
-  sourceSets.all { languageSettings { languageVersion = "2.0" } }
-}
+kotlin { jvmToolchain { languageVersion.set(JavaLanguageVersion.of(11)) } }
 
 tasks.test { useJUnitPlatform() }
 
