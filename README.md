@@ -49,15 +49,21 @@ For more examples of how the library can be used take a look at the tests.
 
 ## Build Setup
 
-For sonatype
+### For sonatype
+
 login [create a token username/password pair](https://blog.solidsoft.pl/2015/09/08/deploy-to-maven-central-using-api-key-aka-auth-token/)
 and set them as env variables.
 
 - `ORG_GRADLE_PROJECT_sonatypeUsername`
 - `ORG_GRADLE_PROJECT_sonatypePassword`
 
-For pgp
+### For pgp
+
 key [use in-memory ascii-armored OpenPGP subkeys](https://docs.gradle.org/current/userguide/signing_plugin.html#using_in_memory_ascii_armored_openpgp_subkeys)
 
 - `ORG_GRADLE_PROJECT_signingKey`
 - `ORG_GRADLE_PROJECT_signingPassword`
+
+### For semantic-release
+
+- `GITLAB_TOKEN`
