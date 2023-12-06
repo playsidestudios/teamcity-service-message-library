@@ -1,6 +1,7 @@
 package io.github.playsidestudios.teamcityservicemessages
 
 import io.github.playsidestudios.teamcityservicemessages.Message.*
+import io.github.playsidestudios.teamcityservicemessages.Message.InspectionType
 import io.github.playsidestudios.teamcityservicemessages.message.MultiAttributeMessage
 import io.github.playsidestudios.teamcityservicemessages.message.NoAttributeMessage
 import io.github.playsidestudios.teamcityservicemessages.message.SingleAttributeMessage
@@ -9,9 +10,11 @@ import java.nio.file.Path
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-internal class EnableServiceMessages : NoAttributeMessage(EnabledServiceMessages)
+internal class EnableServiceMessages(flowId: String? = null) :
+    NoAttributeMessage(EnabledServiceMessages, flowId)
 
-internal class DisableServiceMessages : NoAttributeMessage(DisabledServiceMessages)
+internal class DisableServiceMessages(flowId: String? = null) :
+    NoAttributeMessage(DisabledServiceMessages, flowId)
 
 /**
  * You can publish the build artifacts while the build is still running, immediately after the
@@ -55,17 +58,17 @@ private class CompilerOpen(compiler: String) :
 private class CompilerClosed(compiler: String) :
     MultiAttributeMessage(CompilationFinished, listOf("compiler" to compiler))
 
-private class InspectionType(id: String, name: String, category: String, description: String) :
+internal class InspectionType(id: String, name: String, category: String, description: String) :
     MultiAttributeMessage(
         InspectionType,
         listOf("id" to id, "name" to name, "category" to category, "description" to description))
 
-private class InspectionMessage(
+internal class InspectionMessage(
     id: String,
     file: Path,
     line: Int? = null,
     message: String? = null,
-    severity: InspectionSeverity? = null
+    severity: InspectionSeverity? = null,
 ) :
     MultiAttributeMessage(
         Inspection,
@@ -264,86 +267,4 @@ class TESTS(private val testSuite: String) : ServiceMessageBlock {
     t.close()
     return t
   }
-}
-
-fun testSuite(testSuite: String, init: TESTS.() -> Unit): TESTS {
-  val tests = TESTS(testSuite)
-  tests.open()
-  tests.init()
-  tests.close()
-  return tests
-}
-
-/**
- * Blocks are used to group several messages in the build log.
- *
- * The blockOpened system message has the name attribute, and you can also add its description
- */
-fun block(name: String, description: String? = null, init: BLOCK.() -> Unit): BLOCK {
-  val block = BLOCK(name, description)
-  block.open()
-  block.init()
-  block.close()
-  return block
-}
-
-/**
- * ```
- * ##teamcity[compilationStarted compiler='<compiler_name>']
- * ...
- * ##teamcity[message text='compiler output']
- * ##teamcity[message text='compiler output']
- * ##teamcity[message text='compiler error' status='ERROR']
- * ...
- * ##teamcity[compilationFinished compiler='<compiler name>']
- * ```
- * - 'compiler_name' is an arbitrary name of the compiler performing compilation, for example, javac
- *   or groovyc. Currently, it is used as a block name in the build log.
- * - Any message with status ERROR reported between compilationStarted and compilationFinished will
- *   be treated as a compilation error.
- */
-fun compiler(compiler: String, init: COMPILER.() -> Unit): COMPILER {
-  val compilerBlock = COMPILER(compiler)
-  compilerBlock.open()
-  compilerBlock.init()
-  compilerBlock.close()
-  return compilerBlock
-}
-
-/**
- * If you need for some reason to disable searching for service messages in the output, you can
- * disable the service messages search with the messages:
- * ```
- * ##teamcity[enableServiceMessages]
- * ##teamcity[disableServiceMessages]
- * ```
- *
- * Any messages that appear between these two are not parsed as service messages and are effectively
- * ignored. For server-side processing of service messages, enable/disable service messages also
- * supports the flowId attribute and will ignore only the messages with the same flowId.
- */
-fun enableServiceMessages() {
-  EnableServiceMessages().print()
-}
-
-fun disableServiceMessages() {
-  DisableServiceMessages().print()
-}
-
-fun inspectionType(id: String, name: String, category: String, description: String) {
-  InspectionType(id, name, category, description).print()
-}
-
-fun publishArtifact(path: String) {
-  PublishArtifactMessage(path).print()
-}
-
-fun inspection(
-    id: String,
-    file: Path,
-    line: Int?,
-    message: String?,
-    severity: InspectionSeverity?
-) {
-  InspectionMessage(id, file, line, message, severity).print()
 }

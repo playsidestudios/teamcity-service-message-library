@@ -7,16 +7,14 @@ import kotlin.test.assertEquals
 internal class OneLinerTests {
   @Test
   fun testEnableServiceMessages() {
-    val enableExpected = "##teamcity[enableServiceMessages]"
-    assertEquals(enableExpected, EnableServiceMessages().toString())
-    val stdOut = tapSystemOutNormalized { enableServiceMessages() }
+    val enableExpected = "##teamcity[enableServiceMessages flowId='test']"
+    val stdOut = tapSystemOutNormalized { enableServiceMessages("test") }
     assertEquals(enableExpected, stdOut.trim())
   }
 
   @Test
   fun testDisableServiceMessages() {
     val disableExpected = "##teamcity[disableServiceMessages]"
-    assertEquals(disableExpected, DisableServiceMessages().toString())
     val stdOut = tapSystemOutNormalized { disableServiceMessages() }
     assertEquals(disableExpected, stdOut.trim())
   }
@@ -25,8 +23,26 @@ internal class OneLinerTests {
   fun testArtifactPublishMessage() {
     val path = "+:test/**/* => test.zip"
     val expected = "##teamcity[publishArtifacts '${path}']"
-    assertEquals(expected, PublishArtifactMessage(path).toString())
     val stdOut = tapSystemOutNormalized { publishArtifact(path) }
+    assertEquals(expected, stdOut.trim())
+  }
+
+  @Test
+  fun testGenericMessage() {
+    val expected = "##teamcity[message text='text' status='NORMAL']"
+    val message = GenericMessage("text")
+    assertEquals(expected, message.toString())
+    val stdOut = tapSystemOutNormalized { message.print() }
+    assertEquals(expected, stdOut.trim())
+  }
+
+  @Test
+  fun testErrorGenericMessage() {
+    val expected =
+        "##teamcity[message text='failure' status='ERROR' errorDetails='failed for some reason' flowId='errorFlow']"
+    val message = GenericMessage("failure", Status.ERROR, "failed for some reason", "errorFlow")
+    assertEquals(expected, message.toString())
+    val stdOut = tapSystemOutNormalized { message.print() }
     assertEquals(expected, stdOut.trim())
   }
 }

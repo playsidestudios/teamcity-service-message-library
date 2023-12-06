@@ -1,4 +1,4 @@
-package io.github.playsidestudios.teamcityservicemessages
+package io.github.playsidestudios.teamcityservicemessages.message
 
 interface ServiceMessage {
   override fun toString(): String

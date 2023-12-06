@@ -1,7 +1,6 @@
 package io.github.playsidestudios.teamcityservicemessages.message
 
 import io.github.playsidestudios.teamcityservicemessages.Message
-import io.github.playsidestudios.teamcityservicemessages.ServiceMessage
 
 /**
  * [Escaped Values](https://www.jetbrains.com/help/teamcity/service-messages.html#Escaped+Values)
@@ -17,33 +16,49 @@ fun String.escapeForTeamcity(): String {
 }
 
 /**
- * [Service Messages Formats](https://www.jetbrains.com/help/teamcity/service-messages.html#Service+Messages+Formats)
+ * [Service-Messages-Formats](https://www.jetbrains.com/help/teamcity/service-messages.html#Service+Messages+Formats)
  */
-sealed class TeamCityMessage() : ServiceMessage {
-    private val open = "##teamcity["
-    private val close = "]"
-  override fun toString(): String =
-      when (this) {
-        is SingleAttributeMessage -> "$open${this.name.text} '${this.value.escapeForTeamcity()}'$close"
-        is NoAttributeMessage -> "$open${this.name.text}$close"
-        is MultiAttributeMessage -> {
-          val keyValues =
-              this.arguments
-                  .filter { it.second != null }
-                  .joinToString(separator = " ") {
-                    "${it.first}='${it.second?.escapeForTeamcity()}'"
-                  }
-                  .let {
-                    if (it.isNotBlank()) {
-                      it.padStart(it.length + 1)
-                    } else {
-                      it
-                    }
-                  }
+sealed class TeamCityMessage(
+    private val name: Message,
+    private val flowId: String? = null,
+) : ServiceMessage {
+  private val open = "##teamcity["
+  private val close = "]"
 
-          "$open${this.name.text}$keyValues$close"
-        }
+  private fun keyValue(key: String, value: String?): String {
+    if (value.isNullOrBlank()) {
+      return ""
+    }
+    return "${key}='${value.escapeForTeamcity()}'"
+  }
+
+  override fun toString(): String {
+    val flowIdKey =
+        keyValue("flowId", flowId).let { if (it.isNotBlank()) it.padStart(it.length + 1) else it }
+
+    when (this) {
+      is SingleAttributeMessage ->
+          return "$open${this.name.text} '${this.value.escapeForTeamcity()}'$flowIdKey$close"
+      is NoAttributeMessage -> return "$open${this.name.text}$flowIdKey$close"
+      is MultiAttributeMessage -> {
+        val temp = this.arguments.toMutableList()
+        temp.add(Pair("flowId", this.flowId))
+        val keyValues =
+            temp
+                .filterNot { it.second.isNullOrBlank() }
+                .joinToString(separator = " ") { keyValue(it.first, it.second) }
+                .let {
+                  if (it.isNotBlank()) {
+                    it.padStart(it.length + 1)
+                  } else {
+                    it
+                  }
+                }
+
+        return "$open${this.name.text}$keyValues$close"
       }
+    }
+  }
 
   override fun print() {
     println(toString())
@@ -51,10 +66,18 @@ sealed class TeamCityMessage() : ServiceMessage {
 }
 
 open class MultiAttributeMessage(
-    val name: Message,
-    val arguments: List<Pair<String, String?>> = listOf(),
-) : TeamCityMessage()
+    name: Message,
+    val arguments: List<Pair<String, String?>>,
+    flowId: String? = null,
+) : TeamCityMessage(name, flowId)
 
-open class SingleAttributeMessage(val name: Message, val value: String) : TeamCityMessage()
+internal open class SingleAttributeMessage(
+    name: Message,
+    val value: String,
+    flowId: String? = null,
+) : TeamCityMessage(name, flowId)
 
-open class NoAttributeMessage(val name: Message) : TeamCityMessage()
+internal open class NoAttributeMessage(
+    name: Message,
+    flowId: String? = null,
+) : TeamCityMessage(name, flowId)
