@@ -20,4 +20,13 @@ internal class OneLinerTests {
     val stdOut = tapSystemOutNormalized { disableServiceMessages() }
     assertEquals(disableExpected, stdOut.trim())
   }
+
+  @Test
+  fun testArtifactPublishMessage() {
+    val path = "+:test/**/* => test.zip"
+    val expected = "##teamcity[publishArtifacts '${path}']"
+    assertEquals(expected, PublishArtifactMessage(path).toString())
+    val stdOut = tapSystemOutNormalized { publishArtifact(path) }
+    assertEquals(expected, stdOut.trim())
+  }
 }

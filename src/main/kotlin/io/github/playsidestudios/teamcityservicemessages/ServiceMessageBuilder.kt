@@ -3,14 +3,45 @@ package io.github.playsidestudios.teamcityservicemessages
 import io.github.playsidestudios.teamcityservicemessages.Message.*
 import io.github.playsidestudios.teamcityservicemessages.message.MultiAttributeMessage
 import io.github.playsidestudios.teamcityservicemessages.message.NoAttributeMessage
+import io.github.playsidestudios.teamcityservicemessages.message.SingleAttributeMessage
 import java.net.URL
 import java.nio.file.Path
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-class EnableServiceMessages : NoAttributeMessage(EnabledServiceMessages)
+internal class EnableServiceMessages : NoAttributeMessage(EnabledServiceMessages)
 
-class DisableServiceMessages : NoAttributeMessage(DisabledServiceMessages)
+internal class DisableServiceMessages : NoAttributeMessage(DisabledServiceMessages)
+
+/**
+ * You can publish the build artifacts while the build is still running, immediately after the
+ * artifacts are built.
+ *
+ * To do this, you need to output the following line:
+ * ```
+ * ##teamcity[publishArtifacts '<path>']
+ * ```
+ *
+ * The <path> has to adhere to the same rules as the Build Artifact specification of the Build
+ * Configuration Settings. The files matching the <path> will be uploaded and visible as the
+ * artifacts of the running build.
+ *
+ * The message should be printed after all the files are ready and no file is locked for reading.
+ * ---
+ * Tip
+ * > To publish multiple artifact files in one archive, you need to configure the Artifact paths in
+ * > General Settings of a build configuration. If you use service messages, only artifacts for the
+ * > last rule will be published to the archive. --- Artifacts are uploaded in the background, which
+ * > can take time. Make sure the matching files are not deleted till the end of the build (for
+ * > example, you can put them in a directory that is cleaned on the next build start, in a temp
+ * > directory, or use Swabra to clean them after the build). --- note
+ *
+ * > The process of publishing artifacts can affect the build, because it consumes network traffic,
+ * > and some disk/CPU resources (should be pretty negligible for not large files/directories). ---
+ * > Artifacts that are specified in the build configuration setting will be published as usual.
+ */
+internal class PublishArtifactMessage(path: String) :
+    SingleAttributeMessage(PublishArtifacts, path)
 
 private class BlockOpened(name: String, description: String? = null) :
     MultiAttributeMessage(BlockOpened, listOf("name" to name, "description" to description))
@@ -301,6 +332,10 @@ fun disableServiceMessages() {
 
 fun inspectionType(id: String, name: String, category: String, description: String) {
   InspectionType(id, name, category, description).print()
+}
+
+fun publishArtifact(path: String) {
+  PublishArtifactMessage(path).print()
 }
 
 fun inspection(
