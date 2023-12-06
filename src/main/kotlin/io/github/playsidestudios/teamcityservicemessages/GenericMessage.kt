@@ -1,5 +1,7 @@
 package io.github.playsidestudios.teamcityservicemessages
 
+import io.github.playsidestudios.teamcityservicemessages.message.MultiAttributeMessage
+
 /**
  * You can report messages to a build log as follows:
  * ```##teamcity[message text='<message text>' errorDetails='<error details>' status='<status value>']```
@@ -17,7 +19,7 @@ class GenericMessage(
     errorDetails: String? = null,
     flowId: String? = null,
 ) :
-    TeamCityMessage(
+    MultiAttributeMessage(
         Message.GenericMessage,
         listOf(
             "text" to text,

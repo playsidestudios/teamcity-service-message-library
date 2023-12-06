@@ -1,29 +1,32 @@
 package io.github.playsidestudios.teamcityservicemessages
 
+import io.github.playsidestudios.teamcityservicemessages.Message.*
+import io.github.playsidestudios.teamcityservicemessages.message.MultiAttributeMessage
+import io.github.playsidestudios.teamcityservicemessages.message.NoAttributeMessage
 import java.net.URL
 import java.nio.file.Path
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-class EnableServiceMessages : TeamCityMessage(Message.EnabledServiceMessages)
+class EnableServiceMessages : NoAttributeMessage(EnabledServiceMessages)
 
-class DisableServiceMessages : TeamCityMessage(Message.DisabledServiceMessages)
+class DisableServiceMessages : NoAttributeMessage(DisabledServiceMessages)
 
 private class BlockOpened(name: String, description: String? = null) :
-    TeamCityMessage(Message.BlockOpened, listOf("name" to name, "description" to description))
+    MultiAttributeMessage(BlockOpened, listOf("name" to name, "description" to description))
 
 private class BlockClosed(name: String) :
-    TeamCityMessage(Message.BlockClosed, listOf("name" to name))
+    MultiAttributeMessage(BlockClosed, listOf("name" to name))
 
 private class CompilerOpen(compiler: String) :
-    TeamCityMessage(Message.CompilationStarted, listOf("compiler" to compiler))
+    MultiAttributeMessage(CompilationStarted, listOf("compiler" to compiler))
 
 private class CompilerClosed(compiler: String) :
-    TeamCityMessage(Message.CompilationFinished, listOf("compiler" to compiler))
+    MultiAttributeMessage(CompilationFinished, listOf("compiler" to compiler))
 
 private class InspectionType(id: String, name: String, category: String, description: String) :
-    TeamCityMessage(
-        Message.InspectionType,
+    MultiAttributeMessage(
+        InspectionType,
         listOf("id" to id, "name" to name, "category" to category, "description" to description))
 
 private class InspectionMessage(
@@ -33,8 +36,8 @@ private class InspectionMessage(
     message: String? = null,
     severity: InspectionSeverity? = null
 ) :
-    TeamCityMessage(
-        Message.Inspection,
+    MultiAttributeMessage(
+        Inspection,
         listOf(
             "typeId" to id,
             "message" to message,
@@ -43,35 +46,35 @@ private class InspectionMessage(
             "SEVERITY" to severity?.text))
 
 private class TestSuiteStarted(testSuite: String) :
-    TeamCityMessage(Message.TestSuiteStarted, listOf("name" to testSuite))
+    MultiAttributeMessage(TestSuiteStarted, listOf("name" to testSuite))
 
 private class TestSuiteFinished(testSuite: String) :
-    TeamCityMessage(Message.TestSuiteFinished, listOf("name" to testSuite))
+    MultiAttributeMessage(TestSuiteFinished, listOf("name" to testSuite))
 
 private class TestStarted(test: String, captureStandardOutput: Boolean) :
-    TeamCityMessage(
-        Message.TestStarted,
+    MultiAttributeMessage(
+        TestStarted,
         listOf("name" to test, "captureStandardOutput" to captureStandardOutput.toString()),
     )
 
 private class TestFinished(test: String, duration: Int) :
-    TeamCityMessage(
-        Message.TestFinished,
+    MultiAttributeMessage(
+        TestFinished,
         listOf("name" to test, "duration" to duration.toString()),
     )
 
 private class TestIgnored(test: String, message: String) :
-    TeamCityMessage(Message.TestIgnored, listOf("name" to test, "message" to message))
+    MultiAttributeMessage(TestIgnored, listOf("name" to test, "message" to message))
 
 private class TestStdOut(test: String, out: String) :
-    TeamCityMessage(Message.TestStdOut, listOf("name" to test, "out" to out))
+    MultiAttributeMessage(TestStdOut, listOf("name" to test, "out" to out))
 
 private class TestStdErr(test: String, out: String) :
-    TeamCityMessage(Message.TestStdErr, listOf("name" to test, "out" to out))
+    MultiAttributeMessage(TestStdErr, listOf("name" to test, "out" to out))
 
 private class TestFailed(test: String, message: String, details: String) :
-    TeamCityMessage(
-        Message.TestFailed,
+    MultiAttributeMessage(
+        TestFailed,
         listOf(
             "name" to test,
             "message" to message,
@@ -79,8 +82,8 @@ private class TestFailed(test: String, message: String, details: String) :
         ))
 
 private class TestMetadata(test: String, value: String, type: MetadataType, name: String? = null) :
-    TeamCityMessage(
-        Message.TestMetadata,
+    MultiAttributeMessage(
+        TestMetadata,
         listOf("name" to name, "test-name" to test, "value" to value, "type" to type.text))
 
 private class TestFailedComparison(
@@ -90,8 +93,8 @@ private class TestFailedComparison(
     actual: String,
     expected: String
 ) :
-    TeamCityMessage(
-        Message.TestFailed,
+    MultiAttributeMessage(
+        TestFailed,
         listOf(
             "name" to test,
             "message" to message,
@@ -120,7 +123,8 @@ class COMPILER(private var compiler: String) : ServiceMessageBlock {
   }
 }
 
-class TEST(private var test: String, private var captureStandardOutput: Boolean) : ServiceMessageBlock {
+class TEST(private var test: String, private var captureStandardOutput: Boolean) :
+    ServiceMessageBlock {
   private val timeSource = TimeSource.Monotonic
   private var startTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
   private var endTime: TimeSource.Monotonic.ValueTimeMark = timeSource.markNow()
@@ -275,6 +279,18 @@ fun compiler(compiler: String, init: COMPILER.() -> Unit): COMPILER {
   return compilerBlock
 }
 
+/**
+ * If you need for some reason to disable searching for service messages in the output, you can
+ * disable the service messages search with the messages:
+ * ```
+ * ##teamcity[enableServiceMessages]
+ * ##teamcity[disableServiceMessages]
+ * ```
+ *
+ * Any messages that appear between these two are not parsed as service messages and are effectively
+ * ignored. For server-side processing of service messages, enable/disable service messages also
+ * supports the flowId attribute and will ignore only the messages with the same flowId.
+ */
 fun enableServiceMessages() {
   EnableServiceMessages().print()
 }
