@@ -67,3 +67,10 @@ key [use in-memory ascii-armored OpenPGP subkeys](https://docs.gradle.org/curren
 ### For semantic-release
 
 - `GITLAB_TOKEN` or `GITHUB_TOKEN`
+
+Run:
+
+```shell
+npm install -g semantic-release gradle-semantic-release-plugin @semantic-release/git @semantic-release/changelog
+npx semantic-release
+```
