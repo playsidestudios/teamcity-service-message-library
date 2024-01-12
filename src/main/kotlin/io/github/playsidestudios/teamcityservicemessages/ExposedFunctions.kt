@@ -95,3 +95,7 @@ fun buildStatisticValue(key: String, value: Float) {
 fun sendSlackMessage(message: String, sendTo: String, connectionID: String) {
   NotifySlack(message, sendTo, connectionID).print()
 }
+
+fun buildProblem(description: String, identity: String? = null) {
+  BuildProblem(description, identity).print()
+}

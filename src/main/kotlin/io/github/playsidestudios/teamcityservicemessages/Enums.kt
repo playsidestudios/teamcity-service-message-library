@@ -22,6 +22,7 @@ enum class Message(val text: String) {
   PublishArtifacts("publishArtifacts"),
   BuildStatisticValue("buildStatisticValue"),
   Notification("notification"),
+  BuildProblem("buildProblem"),
 }
 
 enum class NotifierTypes {

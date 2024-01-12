@@ -20,6 +20,20 @@ internal class OneLinerTests {
   }
 
   @Test
+  fun buildProblemTest() {
+    val description = "test failure"
+    val identity = "failure"
+    val expected = "##teamcity[buildProblem description='$description' identity='$identity']"
+    val expectedDescriptionOnly = "##teamcity[buildProblem description='$description']"
+
+    var stdOut = tapSystemOutNormalized { buildProblem(description, identity) }
+    assertEquals(expected, stdOut.trim())
+
+    stdOut = tapSystemOutNormalized { buildProblem(description) }
+    assertEquals(expectedDescriptionOnly, stdOut.trim())
+  }
+
+  @Test
   fun slackNotification() {
     val connectionID = "CONNECTION_ID_1"
     val channelID = "C052UHDRZU7"

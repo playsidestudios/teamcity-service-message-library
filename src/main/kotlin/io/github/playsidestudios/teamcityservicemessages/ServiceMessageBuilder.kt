@@ -1,6 +1,7 @@
 package io.github.playsidestudios.teamcityservicemessages
 
 import io.github.playsidestudios.teamcityservicemessages.Message.*
+import io.github.playsidestudios.teamcityservicemessages.Message.BuildProblem
 import io.github.playsidestudios.teamcityservicemessages.Message.InspectionType
 import io.github.playsidestudios.teamcityservicemessages.message.MultiAttributeMessage
 import io.github.playsidestudios.teamcityservicemessages.message.NoAttributeMessage
@@ -74,6 +75,25 @@ internal class NotifySlack(
             "message" to message,
             "connectionID" to connectionID,
             "sendTo" to sendTo))
+
+internal class BuildProblem(
+    /**
+     * description (mandatory): a human-readable plain text describing the build problem. By
+     * default, the description appears in the build status text and in the list of build's
+     * problems. The text is limited to 4000 symbols, and will be truncated if the limit is
+     * exceeded.
+     */
+    description: String,
+    /**
+     * identity (optional): a unique problem ID. Different problems must have different identity,
+     * same problems — same identity, which should not change throughout builds if the same problem,
+     * for example, the same compilation error occurs. It must be a valid Java ID up to 60
+     * characters. If omitted, the identity is calculated based on the description text.
+     */
+    identity: String? = null
+) :
+    MultiAttributeMessage(
+        BuildProblem, listOf("description" to description, "identity" to identity))
 
 internal class BuildStatistic(key: String, value: String) :
     MultiAttributeMessage(BuildStatisticValue, listOf("key" to key, "value" to value))
