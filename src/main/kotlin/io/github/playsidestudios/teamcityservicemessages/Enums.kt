@@ -20,7 +20,13 @@ enum class Message(val text: String) {
   InspectionType("inspectionType"),
   Inspection("inspection"),
   PublishArtifacts("publishArtifacts"),
-  BuildStatisticValue("buildStatisticValue")
+  BuildStatisticValue("buildStatisticValue"),
+  Notification("notification"),
+}
+
+enum class NotifierTypes {
+  slack,
+  email,
 }
 
 enum class Status {

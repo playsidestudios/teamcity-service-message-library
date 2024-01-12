@@ -46,6 +46,35 @@ internal class DisableServiceMessages(flowId: String? = null) :
 internal class PublishArtifactMessage(path: String) :
     SingleAttributeMessage(PublishArtifacts, path)
 
+internal class NotifySlack(
+    /**
+     * the message to show. Supports Markdown syntax (apart from "\n" for line breaks, use "|n" or
+     * "|r" instead).
+     */
+    message: String,
+    /**
+     * specifies who should receive the message. Accepts a single Slack channel name, channel ID
+     * (starts with "C", for instance, "C052UHDRZU7"), or user ID (starts with "U", for instance,
+     * "U02K2UVKJP7") as value. If you need to send the same message to multiple recipients, create
+     * multiple service messages with different sendTo values.
+     */
+    sendTo: String,
+    /**
+     * the optional parameter that allows you to choose a specific Slack connection that TeamCity
+     * should use to send this message. Accepts connection IDs as values. If this parameter is not
+     * specified, TeamCity will retrieve all Slack connections available for the current project and
+     * choose the one whose Notifications limit is not zero.
+     */
+    connectionID: String
+) :
+    MultiAttributeMessage(
+        Notification,
+        listOf(
+            "notifier" to NotifierTypes.slack.name,
+            "message" to message,
+            "connectionID" to connectionID,
+            "sendTo" to sendTo))
+
 internal class BuildStatistic(key: String, value: String) :
     MultiAttributeMessage(BuildStatisticValue, listOf("key" to key, "value" to value))
 

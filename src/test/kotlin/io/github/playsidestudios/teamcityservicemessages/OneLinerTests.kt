@@ -20,6 +20,22 @@ internal class OneLinerTests {
   }
 
   @Test
+  fun slackNotification() {
+    val connectionID = "CONNECTION_ID_1"
+    val channelID = "C052UHDRZU7"
+    val message =
+        """
+      test multiline message
+      `markdown allowed`
+    """
+            .trimIndent()
+    val stdOut = tapSystemOutNormalized { sendSlackMessage(message, channelID, connectionID) }
+    assertEquals(
+        "##teamcity[notification notifier='${NotifierTypes.slack.name}' message='test multiline message|n`markdown allowed`' connectionID='$connectionID' sendTo='$channelID']",
+        stdOut.trim())
+  }
+
+  @Test
   fun testBuildStatisticsInteger() {
     val key = "test"
     val value = 11111111
