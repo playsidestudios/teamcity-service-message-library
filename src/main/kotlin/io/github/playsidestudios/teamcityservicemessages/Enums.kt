@@ -19,7 +19,8 @@ enum class Message(val text: String) {
   TestMetadata("testMetadata"),
   InspectionType("inspectionType"),
   Inspection("inspection"),
-  PublishArtifacts("publishArtifacts")
+  PublishArtifacts("publishArtifacts"),
+  BuildStatisticValue("buildStatisticValue")
 }
 
 enum class Status {

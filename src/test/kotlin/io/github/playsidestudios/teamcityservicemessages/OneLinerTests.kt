@@ -20,6 +20,25 @@ internal class OneLinerTests {
   }
 
   @Test
+  fun testBuildStatisticsInteger() {
+    val key = "test"
+    val value = 11111111
+    val expected = "##teamcity[buildStatisticValue key='$key' value='$value']"
+    val stdOut = tapSystemOutNormalized { buildStatisticValue(key, value) }
+    assertEquals(expected, stdOut.trim())
+  }
+
+  @Test
+  fun testBuildStatisticsFloat() {
+    val key = "test"
+    val value = 1.11111F
+    val expected = "##teamcity[buildStatisticValue key='$key' value='$value']"
+    val stdOut = tapSystemOutNormalized { buildStatisticValue(key, value) }
+    println(stdOut)
+    assertEquals(expected, stdOut.trim())
+  }
+
+  @Test
   fun testArtifactPublishMessage() {
     val path = "+:test/**/* => test.zip"
     val expected = "##teamcity[publishArtifacts '${path}']"

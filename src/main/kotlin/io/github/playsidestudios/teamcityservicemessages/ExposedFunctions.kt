@@ -3,11 +3,11 @@ package io.github.playsidestudios.teamcityservicemessages
 import java.nio.file.Path
 
 fun testSuite(testSuite: String, init: TESTS.() -> Unit): TESTS {
-    val tests = TESTS(testSuite)
-    tests.open()
-    tests.init()
-    tests.close()
-    return tests
+  val tests = TESTS(testSuite)
+  tests.open()
+  tests.init()
+  tests.close()
+  return tests
 }
 
 /**
@@ -16,11 +16,11 @@ fun testSuite(testSuite: String, init: TESTS.() -> Unit): TESTS {
  * The blockOpened system message has the name attribute, and you can also add its description
  */
 fun block(name: String, description: String? = null, init: BLOCK.() -> Unit): BLOCK {
-    val block = BLOCK(name, description)
-    block.open()
-    block.init()
-    block.close()
-    return block
+  val block = BLOCK(name, description)
+  block.open()
+  block.init()
+  block.close()
+  return block
 }
 
 /**
@@ -39,11 +39,11 @@ fun block(name: String, description: String? = null, init: BLOCK.() -> Unit): BL
  *   be treated as a compilation error.
  */
 fun compiler(compiler: String, init: COMPILER.() -> Unit): COMPILER {
-    val compilerBlock = COMPILER(compiler)
-    compilerBlock.open()
-    compilerBlock.init()
-    compilerBlock.close()
-    return compilerBlock
+  val compilerBlock = COMPILER(compiler)
+  compilerBlock.open()
+  compilerBlock.init()
+  compilerBlock.close()
+  return compilerBlock
 }
 
 /**
@@ -59,19 +59,19 @@ fun compiler(compiler: String, init: COMPILER.() -> Unit): COMPILER {
  * supports the flowId attribute and will ignore only the messages with the same flowId.
  */
 fun enableServiceMessages(flowId: String? = null) {
-    EnableServiceMessages(flowId).print()
+  EnableServiceMessages(flowId).print()
 }
 
 fun disableServiceMessages(flowId: String? = null) {
-    DisableServiceMessages(flowId).print()
+  DisableServiceMessages(flowId).print()
 }
 
 fun inspectionType(id: String, name: String, category: String, description: String) {
-    InspectionType(id, name, category, description).print()
+  InspectionType(id, name, category, description).print()
 }
 
 fun publishArtifact(path: String) {
-    PublishArtifactMessage(path).print()
+  PublishArtifactMessage(path).print()
 }
 
 fun inspection(
@@ -81,5 +81,13 @@ fun inspection(
     message: String?,
     severity: InspectionSeverity?
 ) {
-    InspectionMessage(id, file, line, message, severity).print()
+  InspectionMessage(id, file, line, message, severity).print()
+}
+
+fun buildStatisticValue(key: String, value: Int) {
+  BuildStatistic(key = key, value = value.toString()).print()
+}
+
+fun buildStatisticValue(key: String, value: Float) {
+  BuildStatistic(key = key, value = value.toString()).print()
 }

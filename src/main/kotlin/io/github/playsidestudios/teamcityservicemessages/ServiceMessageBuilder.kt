@@ -46,6 +46,9 @@ internal class DisableServiceMessages(flowId: String? = null) :
 internal class PublishArtifactMessage(path: String) :
     SingleAttributeMessage(PublishArtifacts, path)
 
+internal class BuildStatistic(key: String, value: String) :
+    MultiAttributeMessage(BuildStatisticValue, listOf("key" to key, "value" to value))
+
 private class BlockOpened(name: String, description: String? = null) :
     MultiAttributeMessage(BlockOpened, listOf("name" to name, "description" to description))
 
