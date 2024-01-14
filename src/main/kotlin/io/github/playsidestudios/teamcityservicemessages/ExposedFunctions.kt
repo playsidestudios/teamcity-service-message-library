@@ -84,11 +84,7 @@ fun inspection(
   InspectionMessage(id, file, line, message, severity).print()
 }
 
-fun buildStatisticValue(key: String, value: Int) {
-  BuildStatistic(key = key, value = value.toString()).print()
-}
-
-fun buildStatisticValue(key: String, value: Float) {
+fun <T : Number> buildStatisticValue(key: String, value: T) {
   BuildStatistic(key = key, value = value.toString()).print()
 }
 

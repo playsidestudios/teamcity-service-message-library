@@ -1,6 +1,7 @@
 package io.github.playsidestudios.teamcityservicemessages
 
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
+import java.math.RoundingMode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -63,6 +64,16 @@ internal class OneLinerTests {
     val key = "test"
     val value = 1.11111F
     val expected = "##teamcity[buildStatisticValue key='$key' value='$value']"
+    val stdOut = tapSystemOutNormalized { buildStatisticValue(key, value) }
+    println(stdOut)
+    assertEquals(expected, stdOut.trim())
+  }
+
+  @Test
+  fun testBuildStatisticsBigDecimal() {
+    val key = "test"
+    val value = 1.111111F.toBigDecimal().setScale(2, RoundingMode.HALF_UP)
+    val expected = "##teamcity[buildStatisticValue key='$key' value='1.11']"
     val stdOut = tapSystemOutNormalized { buildStatisticValue(key, value) }
     println(stdOut)
     assertEquals(expected, stdOut.trim())
