@@ -23,6 +23,8 @@ enum class Message(val text: String) {
   BuildStatisticValue("buildStatisticValue"),
   Notification("notification"),
   BuildProblem("buildProblem"),
+  AddBuildTag("addBuildTag"),
+  RemoveBuildTag("removeBuildTag"),
 }
 
 enum class NotifierTypes {

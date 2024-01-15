@@ -21,6 +21,17 @@ internal class OneLinerTests {
   }
 
   @Test
+  fun buildTags() {
+    val tag = "test-tag"
+    val addExpected = "##teamcity[addBuildTag '$tag']"
+    val removeExpected = "##teamcity[removeBuildTag '$tag']"
+    val tagAddStdOut = tapSystemOutNormalized { addBuildTag(tag) }
+    val tagRemoveStdOut = tapSystemOutNormalized { removeBuildTag(tag) }
+    assertEquals(addExpected, tagAddStdOut.trim())
+    assertEquals(removeExpected, tagRemoveStdOut.trim())
+  }
+
+  @Test
   fun buildProblemTest() {
     val description = "test failure"
     val identity = "failure"

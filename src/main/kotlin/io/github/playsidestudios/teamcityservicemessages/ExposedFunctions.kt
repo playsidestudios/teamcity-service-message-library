@@ -95,3 +95,11 @@ fun sendSlackMessage(message: String, sendTo: String, connectionID: String) {
 fun buildProblem(description: String, identity: String? = null) {
   BuildProblem(description, identity).print()
 }
+
+fun addBuildTag(tag: String) {
+  AddBuildTag(tag).print()
+}
+
+fun removeBuildTag(tag: String) {
+  RemoveBuildTag(tag).print()
+}
