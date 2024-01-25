@@ -3,6 +3,7 @@ package io.github.playsidestudios.teamcityservicemessages
 import io.github.playsidestudios.teamcityservicemessages.Message.*
 import io.github.playsidestudios.teamcityservicemessages.Message.AddBuildTag
 import io.github.playsidestudios.teamcityservicemessages.Message.BuildProblem
+import io.github.playsidestudios.teamcityservicemessages.Message.ImportData
 import io.github.playsidestudios.teamcityservicemessages.Message.InspectionType
 import io.github.playsidestudios.teamcityservicemessages.Message.RemoveBuildTag
 import io.github.playsidestudios.teamcityservicemessages.message.MultiAttributeMessage
@@ -18,6 +19,19 @@ internal class EnableServiceMessages(flowId: String? = null) :
 
 internal class DisableServiceMessages(flowId: String? = null) :
     NoAttributeMessage(DisabledServiceMessages, flowId)
+
+internal class ImportData(
+    filePath: String,
+    wrapFileContentInBlock: Boolean = false,
+    charset: String?
+) :
+    MultiAttributeMessage(
+        ImportData,
+        listOf(
+            "type" to "streamToBuildLog",
+            "filePath" to filePath,
+            "wrapFileContentInBlock" to wrapFileContentInBlock.toString(),
+            "charset" to charset))
 
 /**
  * You can publish the build artifacts while the build is still running, immediately after the

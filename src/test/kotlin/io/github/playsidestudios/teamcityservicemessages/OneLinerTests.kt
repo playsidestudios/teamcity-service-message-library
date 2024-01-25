@@ -2,6 +2,7 @@ package io.github.playsidestudios.teamcityservicemessages
 
 import com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized
 import java.math.RoundingMode
+import kotlin.io.path.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -29,6 +30,14 @@ internal class OneLinerTests {
     val tagRemoveStdOut = tapSystemOutNormalized { removeBuildTag(tag) }
     assertEquals(addExpected, tagAddStdOut.trim())
     assertEquals(removeExpected, tagRemoveStdOut.trim())
+  }
+
+  @Test
+  fun writeToLog() {
+    val expected =
+        "##teamcity[importData type='streamToBuildLog' filePath='.\\test.txt' wrapFileContentInBlock='true']"
+    val writeToLogStdOut = tapSystemOutNormalized { writeFileToLog(Path("./test.txt"), true) }
+    assertEquals(expected, writeToLogStdOut.trim())
   }
 
   @Test

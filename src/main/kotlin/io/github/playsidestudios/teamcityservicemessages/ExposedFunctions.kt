@@ -103,3 +103,11 @@ fun addBuildTag(tag: String) {
 fun removeBuildTag(tag: String) {
   RemoveBuildTag(tag).print()
 }
+
+fun writeFileToLog(
+    filePath: Path,
+    wrapFileContentInBLock: Boolean = true,
+    charset: String? = null
+) {
+  ImportData(filePath.toString(), wrapFileContentInBLock, charset).print()
+}
