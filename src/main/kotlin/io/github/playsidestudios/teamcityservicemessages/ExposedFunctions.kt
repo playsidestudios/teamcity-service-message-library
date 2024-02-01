@@ -104,6 +104,10 @@ fun removeBuildTag(tag: String) {
   RemoveBuildTag(tag).print()
 }
 
+fun setParameter(name: String, value: String) {
+  SetParameter(name, value).print()
+}
+
 fun writeFileToLog(
     filePath: Path,
     wrapFileContentInBLock: Boolean = true,

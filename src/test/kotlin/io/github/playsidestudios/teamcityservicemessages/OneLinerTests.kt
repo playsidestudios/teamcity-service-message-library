@@ -125,4 +125,15 @@ internal class OneLinerTests {
     val stdOut = tapSystemOutNormalized { message.print() }
     assertEquals(expected, stdOut.trim())
   }
+
+  @Test
+  fun testSetParameter() {
+    val name = "test_variables.value"
+    val value = 42
+    val expected = "##teamcity[setParameter name='$name' value='$value']"
+    val message = SetParameter(name, value.toString())
+    assertEquals(expected, message.toString())
+    val stdOut = tapSystemOutNormalized { setParameter(name, value.toString())}
+    assertEquals(expected, stdOut.trim())
+  }
 }

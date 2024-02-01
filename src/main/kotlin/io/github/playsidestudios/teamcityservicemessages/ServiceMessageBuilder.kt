@@ -6,6 +6,7 @@ import io.github.playsidestudios.teamcityservicemessages.Message.BuildProblem
 import io.github.playsidestudios.teamcityservicemessages.Message.ImportData
 import io.github.playsidestudios.teamcityservicemessages.Message.InspectionType
 import io.github.playsidestudios.teamcityservicemessages.Message.RemoveBuildTag
+import io.github.playsidestudios.teamcityservicemessages.Message.SetParameter
 import io.github.playsidestudios.teamcityservicemessages.message.MultiAttributeMessage
 import io.github.playsidestudios.teamcityservicemessages.message.NoAttributeMessage
 import io.github.playsidestudios.teamcityservicemessages.message.SingleAttributeMessage
@@ -114,6 +115,9 @@ internal class BuildProblem(
 internal class AddBuildTag(tag: String) : SingleAttributeMessage(AddBuildTag, tag)
 
 internal class RemoveBuildTag(tag: String) : SingleAttributeMessage(RemoveBuildTag, tag)
+
+internal class SetParameter(name: String, value: String) :
+    MultiAttributeMessage(SetParameter, listOf("name" to name, "value" to value))
 
 internal class BuildStatistic(key: String, value: String) :
     MultiAttributeMessage(BuildStatisticValue, listOf("key" to key, "value" to value))

@@ -25,7 +25,8 @@ enum class Message(val text: String) {
   BuildProblem("buildProblem"),
   AddBuildTag("addBuildTag"),
   RemoveBuildTag("removeBuildTag"),
-  ImportData("importData")
+  ImportData("importData"),
+  SetParameter("setParameter")
 }
 
 enum class NotifierTypes {
